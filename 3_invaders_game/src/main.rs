@@ -11,6 +11,7 @@ use crossterm::event::{Event, KeyCode};
 use crossterm::terminal::{EnterAlternateScreen, LeaveAlternateScreen};
 use invaders::{frame, render};
 use invaders::frame::{new_frame, Drawable};
+use invaders::invaders::Invaders;
 use player::Player;
 
 fn main() -> Result <(), Box<dyn Error>> {
@@ -50,6 +51,7 @@ fn main() -> Result <(), Box<dyn Error>> {
     //Game Loop
     let mut player = Player::new();
     let mut instant = Instant::now();
+    let mut invaders = Invaders::new();
     'gameLoop: loop{
         //per frame init
         let delta = instant.elapsed();
@@ -77,10 +79,16 @@ fn main() -> Result <(), Box<dyn Error>> {
 
         //updates
         player.update(delta);
+        if invaders.update(delta) {
+            audio.play("move");
+        }
 
 
         //Draw and render
-        player.draw(&mut curr_frame);
+        let drawables : Vec<&dyn Drawable> = vec![&player, &invaders];
+        for drawable in drawables {
+            drawable.draw(&mut curr_frame);
+        }
         let _ = render_tx.send(curr_frame);
         thread::sleep(Duration::from_millis(1));
     }
