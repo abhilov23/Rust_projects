@@ -2,6 +2,7 @@ use std::time::Duration;
 use invaders::{NUM_COLS, NUM_ROWS};
 use invaders::frame::{Drawable, Frame};
 use invaders::shot::Shot;
+use crate::Invaders;
 
 pub struct Player{
     x: usize,
